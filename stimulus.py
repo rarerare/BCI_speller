@@ -29,12 +29,8 @@ def displayImgs(stimuli, panelLeft, panelRight):
             panel=panelRight
             blankImg=TargetBlankImg
 
-        
         switchImg(faceImages[i], panel)
         stimuli.append(Stimulus(i, time.time()))
-
-        
-        
         time.sleep(1.0)
         panel.configure(image=blankImg)
         panel.image = blankImg

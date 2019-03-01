@@ -13,7 +13,7 @@ while True:
     time.sleep(0.001)
     print(v)
     signal.append(v)
-    if time.time()>start_time+10:
+    if time.time()>start_time+30:
         break
 
 plt.plot(signal)
