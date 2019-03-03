@@ -1,14 +1,24 @@
+
 from PIL import Image, ImageTk
 import Tkinter as tk
 import threading
 from threading import Timer
 import time
 import random
+import mindwave
+
+
+
 faceNum=4
 colorNum=4
 interval_stimulus=1.0
+stimulus_duration=0.5
 
 num_trial=3*2*faceNum
+
+initial_sleep=1.0
+
+
 class Stimulus(object):
     """docstring for stimulus"""
     def __init__(self, imgI, congruent, timeStamp=-1):
@@ -24,7 +34,7 @@ def switchImg(img, panel):
     panel.image = img
 
 def displayFaceImgs(stimuli, panelLeft, panelRight):
-    time.sleep(1.0)
+    time.sleep(initial_sleep)
     for j in range(num_trial):
         i=random.choice(range(faceNum))
         congruent=random.choice([True, False])
@@ -41,12 +51,12 @@ def displayFaceImgs(stimuli, panelLeft, panelRight):
 
         promptPanel.configure(text=prompt)
         promptPanel.text=prompt
-        time.sleep(1.0)
+        time.sleep(interval_stimulus)
         switchImg(faceImages[2*i], panelRight)
         switchImg(faceImages[2*i+1], panelLeft)
 
         stimuli.append(Stimulus(i, congruent, time.time()))
-        time.sleep(0.5)
+        time.sleep(stimulus_duration)
     panelRight.configure(image=TargetBlankImg)
     panelRight.image = TargetBlankImg
     panelLeft.configure(image=nonTargetBlankImg)
@@ -54,7 +64,8 @@ def displayFaceImgs(stimuli, panelLeft, panelRight):
     printTimeStamps()
 
 def displayColorImgs(stimuli, panelLeft, panelRight):
-    time.sleep(1.0)
+    time.sleep(2.0)
+    time.sleep(initial_sleep)
     for j in range(num_trial):
         i=random.choice(range(colorNum))
         congruent=random.choice([True, False])
@@ -71,13 +82,13 @@ def displayColorImgs(stimuli, panelLeft, panelRight):
 
         promptPanel.configure(text=prompt)
         promptPanel.text=prompt
-        time.sleep(1.0)
+        time.sleep(interval_stimulus)
         switchImg(incongruentColorImages[2*i+random.choice([0,1])], panelRight)
         switchImg(congruentColorImages[i], panelLeft)
         
 
         stimuli.append(Stimulus(i, congruent, time.time()))
-        time.sleep(0.5)
+        time.sleep(stimulus_duration)
     panelRight.configure(image=TargetBlankImg)
     panelRight.image = TargetBlankImg
     panelLeft.configure(image=nonTargetBlankImg)
@@ -91,6 +102,25 @@ def printTimeStamps():
             print(s.congruent)
         time.sleep(2.0)
 
+def recordRaw():
+    headset = mindwave.Headset('/dev/tty.MindWaveMobile-SerialPo', '625f')
+    time.sleep(initial_sleep)
+
+    headset.connect()
+    signal=[]
+    start_time=time.time()
+    while True:
+        v=headset.raw_value
+        time.sleep(0.001)
+        print(v,headset.poor_signal, headset.blink)
+        signal.append(v)
+        if time.time()>start_time+30:
+            break
+
+    
+    f=open('signal.txt', 'w')
+    f.write(str(signal))
+    f.close()
 
 window = tk.Tk()
 faceImages=[]
@@ -143,6 +173,9 @@ displayThread=threading.Thread(target=displayColorImgs, args=(stimuli, panelLeft
 displayThread.start()
 #printTimeThread=threading.Thread(target=printTimeStamps)
 #printTimeThread.start()
+
+recordRawThread=threading.Thread(target=recordRaw)
+recordRawThread.start()
 
 
 
