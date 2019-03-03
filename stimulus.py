@@ -14,9 +14,10 @@ colorNum=4
 interval_stimulus=1.0
 stimulus_duration=0.5
 
-num_trial=3*2*faceNum
+num_trial=2*2*faceNum
 
 initial_sleep=1.0
+
 
 
 class Stimulus(object):
@@ -64,7 +65,7 @@ def displayFaceImgs(stimuli, panelLeft, panelRight):
     printTimeStamps()
 
 def displayColorImgs(stimuli, panelLeft, panelRight):
-    time.sleep(2.0)
+    time.sleep(5.0)
     time.sleep(initial_sleep)
     for j in range(num_trial):
         i=random.choice(range(colorNum))
@@ -93,7 +94,10 @@ def displayColorImgs(stimuli, panelLeft, panelRight):
     panelRight.image = TargetBlankImg
     panelLeft.configure(image=nonTargetBlankImg)
     panelLeft.image=nonTargetBlankImg
-    printTimeStamps()        
+    printTimeStamps()
+    f=open('stimuli.txt', 'w')
+    f.write(str([(s.imgIndex, s.congruent, s.timeStamp) for s in stimuli])) 
+    f.close()  
         
 def printTimeStamps():
     for i in range(10):
@@ -120,6 +124,7 @@ def recordRaw():
     
     f=open('signal.txt', 'w')
     f.write(str(signal))
+    f.write("start time:"+str(start_time))
     f.close()
 
 window = tk.Tk()
