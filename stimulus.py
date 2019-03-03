@@ -7,7 +7,7 @@ import time
 import random
 import mindwave
 
-
+from datetime import datetime
 
 faceNum=4
 colorNum=4
@@ -36,6 +36,7 @@ def switchImg(img, panel):
 
 def displayFaceImgs(stimuli, panelLeft, panelRight):
     time.sleep(initial_sleep)
+    dateTimeString=datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
     for j in range(num_trial):
         i=random.choice(range(faceNum))
         congruent=random.choice([True, False])
@@ -67,6 +68,9 @@ def displayFaceImgs(stimuli, panelLeft, panelRight):
 def displayColorImgs(stimuli, panelLeft, panelRight):
     time.sleep(5.0)
     time.sleep(initial_sleep)
+
+
+    dateTimeString=datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
     for j in range(num_trial):
         i=random.choice(range(colorNum))
         congruent=random.choice([True, False])
@@ -95,7 +99,7 @@ def displayColorImgs(stimuli, panelLeft, panelRight):
     panelLeft.configure(image=nonTargetBlankImg)
     panelLeft.image=nonTargetBlankImg
     printTimeStamps()
-    f=open('stimuli.txt', 'w')
+    f=open('stimuli'+dateTimeString+'.txt', 'w')
     f.write(str([(s.imgIndex, s.congruent, s.timeStamp) for s in stimuli])) 
     f.close()  
         
@@ -109,7 +113,7 @@ def printTimeStamps():
 def recordRaw():
     headset = mindwave.Headset('/dev/tty.MindWaveMobile-SerialPo', '625f')
     time.sleep(initial_sleep)
-
+    dateTimeString=datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
     headset.connect()
     signal=[]
     start_time=time.time()
@@ -122,7 +126,7 @@ def recordRaw():
             break
 
     
-    f=open('signal.txt', 'w')
+    f=open('signal'+dateTimeString+'.txt', 'w')
     f.write(str(signal))
     f.write("start time:"+str(start_time))
     f.close()

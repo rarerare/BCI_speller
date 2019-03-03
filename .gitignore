@@ -1,2 +1,2 @@
-stimuli.txt
-signal.txt
+stimuli*.txt
+signal*.txt
