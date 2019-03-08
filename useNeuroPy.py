@@ -1,5 +1,6 @@
 from NeuroPy import NeuroPy
-object1 = NeuroPy('/dev/tty.MindWaveMobile-SerialPo')
+import time
+object1 = NeuroPy('/dev/tty.MindWaveMobile-SerialPo', 9600)
 def attention_callback(attention_value): 
 #"this function will be called everytime NeuroPy has a new value for attention" 
     print "Value of attention is",attention_value 
@@ -15,6 +16,8 @@ object1.start()
 
 
 while True: 
-    #print(object1.rawValue)
+    print(object1.rawValue)
+    time.sleep(0.1)
+    #print(object1.poorSignal)
     if(object1.meditation>1): #another way of accessing data provided by headset (1st being call backs) 
         object1.stop()
