@@ -22,7 +22,6 @@ samp_rate=1000.0
 samp_interval=1.0/samp_rate
 record_duration=30.0
 
-#flashing=False
 
 
 
@@ -42,72 +41,64 @@ def switchImg(img, panel):
     
 
 
-def displayFaceImgs(stimuli, panelLeft, panelRight):
+#def displayFaceImgs(stimuli, panelLeft):
+#    time.sleep(2*initial_sleep)
+#    for j in range(num_trial):
+#        i=random.choice(range(faceNum))
+#        congruent=random.choice([True, False])
+#        #prompt=""
+#        #if congruent:
+#        #    prompt="non target"
+#        #else:
+#        #    prompt="  target  "
+#        #panelRight.configure(image=TargetBlankImg)
+#        #panelRight.image = TargetBlankImg
+#        panelLeft.configure(image=blackBlankImg)
+#        panelLeft.image=blackBlankImg
+#        
+#
+#        #promptPanel.configure(text=prompt)
+#        #promptPanel.text=prompt
+#        time.sleep(interval_stimulus)
+#        #switchImg(faceImages[2*i], panelRight)
+#        #switchImg(faceImages[2*i+1], panelLeft)
+#
+#        #flashing=True
+#        stimuli.append(Stimulus(i, congruent, time.time()))
+#        time.sleep(stimulus_duration)
+#    #panelRight.configure(image=TargetBlankImg)
+#    #panelRight.image = TargetBlankImg
+#    panelLeft.configure(image=blackBlankImg)
+#    panelLeft.image=blackBlankImg
+#    #flashing=False
+#    printTimeStamps()
+
+def displayColorImgs(stimuli, panelLeft):
     time.sleep(2*initial_sleep)
-    dateTimeString=datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
-    for j in range(num_trial):
-        i=random.choice(range(faceNum))
-        congruent=random.choice([True, False])
-        prompt=""
-        if congruent:
-            prompt="non target"
-        else:
-            prompt="  target  "
-        panelRight.configure(image=TargetBlankImg)
-        panelRight.image = TargetBlankImg
-        panelLeft.configure(image=nonTargetBlankImg)
-        panelLeft.image=nonTargetBlankImg
-        
-
-        promptPanel.configure(text=prompt)
-        promptPanel.text=prompt
-        time.sleep(interval_stimulus)
-        switchImg(faceImages[2*i], panelRight)
-        switchImg(faceImages[2*i+1], panelLeft)
-
-        #flashing=True
-        stimuli.append(Stimulus(i, congruent, time.time()))
-        time.sleep(stimulus_duration)
-    panelRight.configure(image=TargetBlankImg)
-    panelRight.image = TargetBlankImg
-    panelLeft.configure(image=nonTargetBlankImg)
-    panelLeft.image=nonTargetBlankImg
-    #flashing=False
-    printTimeStamps()
-
-def displayColorImgs(stimuli, panelLeft, panelRight):
-    time.sleep(2*initial_sleep)
 
 
-    dateTimeString=datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
+    
     for j in range(num_trial):
         i=random.choice(range(colorNum))
         congruent=random.choice([True, False])
-        prompt=""
-        if congruent:
-            prompt="non target"
-        else:
-            prompt="  target  "
-        panelRight.configure(image=TargetBlankImg)
-        panelRight.image = TargetBlankImg
-        panelLeft.configure(image=nonTargetBlankImg)
-        panelLeft.image=nonTargetBlankImg
+       
+        panelLeft.configure(image=blackBlankImg)
+        panelLeft.image=blackBlankImg
         
 
-        promptPanel.configure(text=prompt)
-        promptPanel.text=prompt
+
         time.sleep(interval_stimulus)
-        switchImg(incongruentColorImages[2*i+random.choice([0,1])], panelRight)
-        switchImg(congruentColorImages[i], panelLeft)
-        #flashing=True
+        if congruent:
+            nextImg=congruentColorImages[i]
+        else:
+            nextImg=incongruentColorImages[2*i+random.choice([0,1])]
+        switchImg(nextImg, panelLeft)
 
         stimuli.append(Stimulus(i, congruent, time.time()))
         time.sleep(stimulus_duration)
-    panelRight.configure(image=TargetBlankImg)
-    panelRight.image = TargetBlankImg
-    panelLeft.configure(image=nonTargetBlankImg)
-    panelLeft.image=nonTargetBlankImg
-    #flashing=False
+
+    panelLeft.configure(image=blackBlankImg)
+    panelLeft.image=blackBlankImg
     printTimeStamps()
       
         
@@ -119,14 +110,12 @@ def printTimeStamps():
 def recordRaw():
     headset = mindwave.Headset('/dev/tty.MindWaveMobile-SerialPo', '625f')
     time.sleep(initial_sleep)
-    dateTimeString=datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
     headset.connect()
     signal=[]
     
     
     print("samp_interval"+str(samp_interval))
-    #time_prev=time.time()
-    #time_next=time.time()
+
     start_time=time.time()
     
     for i in range(int(record_duration*samp_rate)):
@@ -134,24 +123,18 @@ def recordRaw():
             time.sleep(start_time+samp_interval*(i+100)-time.time())
         else:
             print("skipped")
-        #time_prev=time_next
+
         v=headset.raw_value
         
         print(v,headset.poor_signal)
         signal.append((v, time.time()))
-        #time_next=time.time()
-        #print("time_prev"+str(time_prev)+"time_next"+str(time_next))
-        #print ("sleep time"+str(samp_interval-(time_next-time_prev)))
-        
 
         
-        #if time.time()>start_time+30:
-         #   break
+
 
     #print("start-end"+str(time.time()-start_time))
     f=open('signal_data/signal'+dateTimeString+'.txt', 'w')
     f.write(str(signal))
-    #f.write("start time:"+str(start_time))
     f.close()
 
 window = tk.Tk()
@@ -179,32 +162,23 @@ for i in range(1,colorNum+1):
     incongruentColorImages.append(inCongruentImg1)
     incongruentColorImages.append(inCongruentImg2)
 
-nonTargetBlankImg=ImageTk.PhotoImage(Image.open("NonTargetBlank.png"))
-TargetBlankImg=ImageTk.PhotoImage(Image.open("TargetBlank.png"))
 
+blackBlankImg=ImageTk.PhotoImage(Image.open("blank_black.jpg"))
 window.title("Face")
-window.geometry("1200x600")
-promptPanel=tk.Label(text="prompt")
-promptPanel.pack(side="top", fill="none", expand="yes")
+window.geometry("500x500")
+
 panelLeft = tk.Label(window)
 panelLeft.pack(side = "left", fill = "none", expand = "yes")
-panelLeft.configure(image=nonTargetBlankImg)
-panelLeft.image=nonTargetBlankImg
-
-panelRight = tk.Label(window)
-panelRight.pack(side = "right", fill = "none", expand = "yes")
-panelRight.configure(image=TargetBlankImg)
-panelRight.image=TargetBlankImg
+panelLeft.configure(image=blackBlankImg)
+panelLeft.image=blackBlankImg
 
 
 
-#displayThread=threading.Thread(target=displayFaceImgs, args=(stimuli, panelLeft, panelRight))
-#displayThread.start()
 
-displayThread=threading.Thread(target=displayColorImgs, args=(stimuli, panelLeft, panelRight))
+dateTimeString=datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
+displayThread=threading.Thread(target=displayColorImgs, args=(stimuli, panelLeft))
 displayThread.start()
-#printTimeThread=threading.Thread(target=printTimeStamps)
-#printTimeThread.start()
+
 
 recordRawThread=threading.Thread(target=recordRaw)
 recordRawThread.start()
