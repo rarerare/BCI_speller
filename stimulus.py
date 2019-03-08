@@ -9,6 +9,11 @@ import mindwave
 
 from datetime import datetime
 import sys
+import os
+if not os.path.exists('stimuli_data'):
+    os.makedirs('stimuli_data')
+if not os.path.exists('signal_data'):
+    os.makedirs('signal_data')
 
 faceNum=4
 colorNum=4
