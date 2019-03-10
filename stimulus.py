@@ -130,9 +130,9 @@ def recordRaw():
             print("skipped")
 
         v=headset.raw_value
-        
-        print(v,headset.poor_signal)
-        signal.append((v, time.time()))
+        poorSignal=headset.poor_signal
+        print(v,poorSignal)
+        signal.append((v, time.time(), poorSignal))
 
         
 
