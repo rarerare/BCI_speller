@@ -20,7 +20,4 @@ if g.mode == 'r':
 aa=np.array(l)
 plt.plot([t[0] for t in aa])
 
-if 1==1 and 2==2:
-    print("yes")
-
     
