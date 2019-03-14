@@ -46,65 +46,73 @@ def switchImg(img, panel):
     
 
 
-#def displayFaceImgs(stimuli, panelLeft):
-#    time.sleep(2*initial_sleep)
-#    for j in range(num_trial):
-#        i=random.choice(range(faceNum))
-#        congruent=random.choice([True, False])
-#        #prompt=""
-#        #if congruent:
-#        #    prompt="non target"
-#        #else:
-#        #    prompt="  target  "
-#        #panelRight.configure(image=TargetBlankImg)
-#        #panelRight.image = TargetBlankImg
-#        panelLeft.configure(image=blackBlankImg)
-#        panelLeft.image=blackBlankImg
-#        
-#
-#        #promptPanel.configure(text=prompt)
-#        #promptPanel.text=prompt
-#        time.sleep(interval_stimulus)
-#        #switchImg(faceImages[2*i], panelRight)
-#        #switchImg(faceImages[2*i+1], panelLeft)
-#
-#        #flashing=True
-#        stimuli.append(Stimulus(i, congruent, time.time()))
-#        time.sleep(stimulus_duration)
-#    #panelRight.configure(image=TargetBlankImg)
-#    #panelRight.image = TargetBlankImg
-#    panelLeft.configure(image=blackBlankImg)
-#    panelLeft.image=blackBlankImg
-#    #flashing=False
-#    printTimeStamps()
-
-def displayColorImgs(stimuli, panelLeft):
+def displayFaceImgs(stimuli, panelLeft):
     time.sleep(2*initial_sleep)
-
-
-    
     for j in range(num_trial):
-        i=random.choice(range(colorNum))
+        i=random.choice(range(faceNum))
         congruent=random.choice([True, False])
-       
+        #prompt=""
+        #if congruent:
+        #    prompt="non target"
+        #else:
+        #    prompt="  target  "
+        #panelRight.configure(image=TargetBlankImg)
+        #panelRight.image = TargetBlankImg
         panelLeft.configure(image=blackBlankImg)
         panelLeft.image=blackBlankImg
         
 
-
+        #promptPanel.configure(text=prompt)
+        #promptPanel.text=prompt
         time.sleep(interval_stimulus)
+        #switchImg(faceImages[2*i], panelRight)
+        #switchImg(faceImages[2*i+1], panelLeft)
+
+        #flashing=True
+
         if congruent:
-            nextImg=congruentColorImages[i]
+            nextImg=congruentFaceImages[i]
         else:
-            nextImg=incongruentColorImages[2*i+random.choice([0,1])]
+            nextImg=incongruentFaceImages[i]
         switchImg(nextImg, panelLeft)
+
 
         stimuli.append(Stimulus(i, congruent, time.time()))
         time.sleep(stimulus_duration)
-
+    #panelRight.configure(image=TargetBlankImg)
+    #panelRight.image = TargetBlankImg
     panelLeft.configure(image=blackBlankImg)
     panelLeft.image=blackBlankImg
+    #flashing=False
     printTimeStamps()
+
+#def displayColorImgs(stimuli, panelLeft):
+#    time.sleep(2*initial_sleep)
+#
+#
+#    
+#    for j in range(num_trial):
+#        i=random.choice(range(colorNum))
+#        congruent=random.choice([True, False])
+#       
+#        panelLeft.configure(image=blackBlankImg)
+#        panelLeft.image=blackBlankImg
+#        
+#
+#
+#        time.sleep(interval_stimulus)
+#        if congruent:
+#            nextImg=congruentColorImages[i]
+#        else:
+#            nextImg=incongruentColorImages[2*i+random.choice([0,1])]
+#        switchImg(nextImg, panelLeft)
+#
+#        stimuli.append(Stimulus(i, congruent, time.time()))
+#        time.sleep(stimulus_duration)
+#
+#    panelLeft.configure(image=blackBlankImg)
+#    panelLeft.image=blackBlankImg
+#    printTimeStamps()
       
         
 def printTimeStamps():
@@ -143,7 +151,9 @@ def recordRaw():
     f.close()
 
 window = tk.Tk()
-faceImages=[]
+congruentFaceImages=[]
+incongruentFaceImages=[]
+
 congruentColorImages=[]
 incongruentColorImages=[]
 stimuli=[]
@@ -152,9 +162,9 @@ stimuli=[]
 # load face images
 for i in range(faceNum):
     invertImg=ImageTk.PhotoImage(Image.open("faceImg/InvertedFace"+str(i)+".jpg"))
-    faceImages.append(invertImg)
+    incongruentFaceImages.append(invertImg)
     regularImg=ImageTk.PhotoImage(Image.open("faceImg/RegularFace"+str(i)+".jpg"))
-    faceImages.append(regularImg)
+    congruentFaceImages.append(regularImg)
 
 
 
@@ -181,7 +191,7 @@ panelLeft.image=blackBlankImg
 
 
 dateTimeString=datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
-displayThread=threading.Thread(target=displayColorImgs, args=(stimuli, panelLeft))
+displayThread=threading.Thread(target=displayFaceImgs, args=(stimuli, panelLeft))
 displayThread.start()
 
 
