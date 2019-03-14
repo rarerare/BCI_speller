@@ -2,14 +2,16 @@ import raw_signal_processing as rsp
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+
+ 
 signalDirName='signal_data'
 stimuliDirName='stimuli_data'
 signalFileNames=[]
 stimuliFileNames=[]
 
-for filename in os.listdir(signalDirName):
-        if filename.startswith('signal') and filename.endswith('.txt'):
-            print(filename)
+#for filename in os.listdir(signalDirName):
+#        if filename.startswith('signal') and filename.endswith('.txt'):
+#            print(filename)
 
 if not os.path.isfile('trials_signal.npy'):
     for filename in os.listdir(signalDirName):
@@ -49,13 +51,15 @@ for trial in trials_signal:
 trials_rawVal=np.array(trials_rawVal)
 print(trials_rawVal.shape)
 trials_stimuli=np.load('trials_stimuli.npy')
-print(trials_stimuli)
-sigOne=[]
-
-for i in range(560, 576):
-    sigOne=sigOne+trials_rawVal[i].tolist()
-
+print(trials_stimuli.shape)
+#sigOne=[]
 #
+#for i in range(560, 576):
+#    sigOne=sigOne+trials_rawVal[i].tolist()
 #
-plt.plot(sigOne)
-plt.show()
+##
+##
+#plt.plot(sigOne)
+#plt.show()
+
+
