@@ -53,10 +53,11 @@ trials_bandPower=[]
 for trial in trials_signal:
     raw=[x[0] for x in trial]
 
+    
     raw=bandFilter.butter_bandpass_filter(np.array(raw), 0.5, 30, fs, order = 2)
     trials_rawVal.append(raw)
     f,p= bandFilter.bandPower(raw)
-    trials_bandPower.append(p[16:100])
+    trials_bandPower.append(p[1:60])
 
 trials_rawVal=np.array(trials_rawVal)
 print(trials_rawVal.shape)
@@ -75,10 +76,22 @@ print(trials_stimuli.shape)
 #    t=bandFilter.butter_bandpass_filter(np.array(t), 0.5, 30, fs, order = 2)
 #    plt.plot(t)
 #plt.show()
+congruent_sigs=[]
+incongruent_sigs=[]
 
-clf_lsqrs = LinearDiscriminantAnalysis(solver = 'lsqr',  shrinkage = 'auto').fit(trials_bandPower[:300], trials_stimuli[:300])
+
+for sig, sti in zip(trials_rawVal, trials_stimuli):
+    if sti:
+        congruent_sigs.append(sig)
+    else:
+        incongruent_sigs.append(sig)
+
+#for s in congruent_sigs:
+#    plt.plot(s)
+#plt.show()
+clf_lsqrs = LinearDiscriminantAnalysis(solver = 'lsqr',  shrinkage = 'auto').fit(trials_rawVal[:80], trials_stimuli[:80])
 correct_count=0
-for b,s in zip(trials_bandPower[300:], trials_stimuli[300:]):
+for b,s in zip(trials_rawVal[80:], trials_stimuli[80:]):
     predict=clf_lsqrs.predict([b])
     if predict[0]==s:
         correct_count+=1
@@ -94,9 +107,9 @@ for b,s in zip(trials_bandPower, trials_stimuli):
         correct_count+=1
 print(correct_count)        
 
-#score_lsqrs = cross_val_score(clf_lsqrs.fit(trials_bandPower, trials_stimuli), trials_bandPower, trials_stimuli, cv = 5)
+score_lsqrs = cross_val_score(clf_lsqrs.fit(trials_rawVal, trials_stimuli), trials_rawVal, trials_stimuli, cv = 5)
 
 # We will print out the mean score
-#print("solver = lsqr  accuracy: " + str(np.mean(score_lsqrs)))
+print("solver = lsqr  accuracy: " + str(np.mean(score_lsqrs)))
 
 
