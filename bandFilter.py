@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     f, p=bandPower=bandPower(signal)
     print(f)
-    plt.plot(f,p)
+    plt.plot(f[8:100],p[8:100])
     plt.show()
 
 

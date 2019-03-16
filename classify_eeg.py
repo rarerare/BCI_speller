@@ -3,7 +3,11 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
- 
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.model_selection import cross_val_score
+from sklearn.svm import SVC
+import bandFilter
+fs=1000
 signalDirName='signal_data'
 stimuliDirName='stimuli_data'
 signalFileNames=[]
@@ -26,7 +30,7 @@ if not os.path.isfile('trials_signal.npy'):
     trials_stimuli=[]
     for sigFN, stiFN in zip(signalFileNames, stimuliFileNames):
         
-        file_trial_signal, file_trial_stimuli=rsp.sync(signalDirName+'/'+sigFN, stimuliDirName+'/'+stiFN, 0, 1.5)
+        file_trial_signal, file_trial_stimuli=rsp.sync(signalDirName+'/'+sigFN, stimuliDirName+'/'+stiFN, 0.0, 1.5)
         trials_signal=trials_signal+file_trial_signal
         trials_stimuli=trials_stimuli+file_trial_stimuli
         #print(trials_stimuli)
@@ -45,9 +49,15 @@ if not os.path.isfile('trials_signal.npy'):
 trials_signal=np.load('trials_signal.npy')
 print(trials_signal.shape)
 trials_rawVal=[]
+trials_bandPower=[]
 for trial in trials_signal:
-    trials_rawVal.append([x[0] for x in trial])
-    
+    raw=[x[0] for x in trial]
+
+    raw=bandFilter.butter_bandpass_filter(np.array(raw), 0.5, 30, fs, order = 2)
+    trials_rawVal.append(raw)
+    f,p= bandFilter.bandPower(raw)
+    trials_bandPower.append(p[16:100])
+
 trials_rawVal=np.array(trials_rawVal)
 print(trials_rawVal.shape)
 trials_stimuli=np.load('trials_stimuli.npy')
@@ -61,5 +71,32 @@ print(trials_stimuli.shape)
 ##
 #plt.plot(sigOne)
 #plt.show()
+#for t in trials_rawVal:
+#    t=bandFilter.butter_bandpass_filter(np.array(t), 0.5, 30, fs, order = 2)
+#    plt.plot(t)
+#plt.show()
+
+clf_lsqrs = LinearDiscriminantAnalysis(solver = 'lsqr',  shrinkage = 'auto').fit(trials_bandPower[:300], trials_stimuli[:300])
+correct_count=0
+for b,s in zip(trials_bandPower[300:], trials_stimuli[300:]):
+    predict=clf_lsqrs.predict([b])
+    if predict[0]==s:
+        correct_count+=1
+
+print(correct_count)
+
+correct_count=0
+clf = SVC(gamma='auto')
+clf.fit(trials_bandPower[:500], trials_stimuli[:500])
+for b,s in zip(trials_bandPower, trials_stimuli):
+    predict=clf.predict([b])
+    if predict[0]==s:
+        correct_count+=1
+print(correct_count)        
+
+#score_lsqrs = cross_val_score(clf_lsqrs.fit(trials_bandPower, trials_stimuli), trials_bandPower, trials_stimuli, cv = 5)
+
+# We will print out the mean score
+#print("solver = lsqr  accuracy: " + str(np.mean(score_lsqrs)))
 
 
