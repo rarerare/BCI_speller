@@ -1,6 +1,6 @@
 import ast
 import matplotlib.pyplot as plt
-f=open('signal_data/signal03_16_2019__10_59_58.txt')
+f=open('signal_data/signal03_16_2019__12_14_30.txt')
 strL=f.read()
 #print(strL)
 l=ast.literal_eval(strL)

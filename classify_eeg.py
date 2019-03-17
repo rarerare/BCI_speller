@@ -89,25 +89,28 @@ for sig, sti in zip(trials_rawVal, trials_stimuli):
 #for s in congruent_sigs:
 #    plt.plot(s)
 #plt.show()
-clf_lsqrs = LinearDiscriminantAnalysis(solver = 'lsqr',  shrinkage = 'auto').fit(trials_rawVal[:80], trials_stimuli[:80])
+
+
+clf_lsqrs = LinearDiscriminantAnalysis(solver = 'lsqr',  shrinkage = 'auto').fit(trials_rawVal[:120],trials_stimuli[:120] )
 correct_count=0
-for b,s in zip(trials_rawVal[80:], trials_stimuli[80:]):
+for b,s in zip(trials_rawVal[120:240], trials_stimuli[120:240]):
     predict=clf_lsqrs.predict([b])
     if predict[0]==s:
         correct_count+=1
 
-print(correct_count)
+print("test_accuracy"+str(float(correct_count)/len(trials_rawVal[120:240])))
 
 correct_count=0
 clf = SVC(gamma='auto')
-clf.fit(trials_bandPower[:500], trials_stimuli[:500])
-for b,s in zip(trials_bandPower, trials_stimuli):
+clf.fit(trials_bandPower[:120], trials_stimuli[:120])
+for b,s in zip(trials_bandPower[120:240], trials_stimuli[120:240]):
     predict=clf.predict([b])
     if predict[0]==s:
         correct_count+=1
-print(correct_count)        
+print("test_accuracy"+str(float(correct_count)/len(trials_rawVal[120:240])))
 
 score_lsqrs = cross_val_score(clf_lsqrs.fit(trials_rawVal, trials_stimuli), trials_rawVal, trials_stimuli, cv = 5)
+print(score_lsqrs)
 
 # We will print out the mean score
 print("solver = lsqr  accuracy: " + str(np.mean(score_lsqrs)))
